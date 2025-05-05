@@ -1,0 +1,16 @@
+{
+  "name": "lafinquita",
+  "version": "2.0.0",
+  "description": "codigo fuente del bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "eoliver",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "grammy": "^1.36.1",
+    "node-fetch": "^3.3.2"
+  }
+}
