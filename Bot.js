@@ -1,3 +1,4 @@
+const add = require('./fetchAdd');
 const { Bot, InlineKeyboard } = require("grammy");
 const express = require('express');
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
@@ -18,7 +19,7 @@ bot.api.setMyCommands(commands);
 bot.command("start", (ctx) => {
   const keyboard = new InlineKeyboard()
     .text("Agregar Elemento", "addElement")
-    .text("List", "listElements")
+    .text("Listar Ventas", "listVentas")
     .row()
     .text("Delete", "deleteElement");
 
@@ -31,12 +32,12 @@ bot.command("start", (ctx) => {
 bot.on("callback_query:data", async (ctx) => {
   const action = ctx.callbackQuery.data;
   const userId = ctx.from.id;
-
+  
   if (action === "addElement") {
     userStates[userId] = { step: "askProductName", data: {} };
     await ctx.reply("Ingresa el nombre del producto");
-  } else if (action === "listElements") {
-    userStates[userId] = { step: "listElements", data: {} };
+  } else if (action === "listVentas") {
+    userStates[userId] = { step: "listVentas", data: {} };
     await ctx.reply("Listando Ventas");
   } else if (action === "deleteElement") {
     userStates[userId] = { step: "deleteElements", data: {} };
@@ -54,7 +55,7 @@ bot.on("message:text", async (ctx) => {
   if (!userState) return;
 
   const userMessage = ctx.message.text;
-
+  //para agregar elementos
   if (userState.step === "askProductName") {
     userState.data.productName = userMessage;
     userState.step = "askCantidad";
@@ -69,6 +70,7 @@ bot.on("message:text", async (ctx) => {
     userState.step = "askPrecio";
     await ctx.reply("Ingresa el precio de los productos");
   } else if (userState.step === "askPrecio") {
+  
     const price = parseFloat(userMessage);
     if (isNaN(price)) {
       await ctx.reply("Ingrese un precio válido.");
@@ -82,31 +84,8 @@ bot.on("message:text", async (ctx) => {
       Pamount: userState.data.price,
     };
 
-    try {
-      const response = await fetch(
-        "https://xxnhehkvqwxwmqmonqhn.supabase.co/functions/v1/FunctionAdd",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4bmhlaGt2cXd4d21xbW9ucWhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MjgzODk0MCwiZXhwIjoyMDU4NDE0OTQwfQ.XNxdrDqcyDB7-LLtLuoOaN7OLevGpzjjgBfyVbT4osA",
-          },
-          body: JSON.stringify(jsonDataADD),
-        }
-      );
-
-      if (response.ok) {
-        await ctx.reply("El producto se ha guardado correctamente");
-      } else {
-        const error = await response.json();
-        console.error(`Fallo al agregar a Supabase: ${JSON.stringify(error)}`);
-        await ctx.reply("Fallo al agregar el producto");
-      }
-    } catch (err) {
-      console.error("Error al enviar datos a Supabase:", err);
-      await ctx.reply("Error al guardar el producto");
-    }
+    await add(jsonDataADD,ctx);
+    
 
     delete userStates[userId];
   }
