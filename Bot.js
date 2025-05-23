@@ -1,3 +1,4 @@
+const list =require('./fetchList')
 const add = require('./fetchAdd');
 const { Bot, InlineKeyboard } = require("grammy");
 const express = require('express');
@@ -37,8 +38,21 @@ bot.on("callback_query:data", async (ctx) => {
     userStates[userId] = { step: "askProductName", data: {} };
     await ctx.reply("Ingresa el nombre del producto");
   } else if (action === "listVentas") {
-    userStates[userId] = { step: "listVentas", data: {} };
-    await ctx.reply("Listando Ventas");
+     const items = await list();
+
+     if (!Array.isArray(items) || items.length===0){
+      await ctx.reply("No hay elementos para listar.");
+      await ctx.answerCallbackQuery();
+      return;
+     }
+     //teclado dinamico
+     const keyboard= new InlineKeyboard();
+     items.forEach(item =>{
+      keyboard.text(item.nombre,`eliminar_${item.id_productos}`).row();
+     });
+     await ctx.reply("Selecciona el elemento a eliminar:",{reply_markup:keyboard});
+     await ctx.answerCallbackQuery();
+     return
   } else if (action === "deleteElement") {
     userStates[userId] = { step: "deleteElements", data: {} };
     await ctx.reply("Elemento a eliminar");
