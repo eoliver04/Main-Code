@@ -1,5 +1,5 @@
-const list =require('./fetchList')
-const add = require('./fetchAdd');
+const list =require('./fetchList.js')
+const add = require('./fetchAdd.js');
 const { Bot, InlineKeyboard } = require("grammy");
 const express = require('express');
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
@@ -94,8 +94,8 @@ bot.on("message:text", async (ctx) => {
 
     const jsonDataADD = {
       Pname: userState.data.productName,
-      Pprise: userState.data.quantity,
-      Pamount: userState.data.price,
+      Pprise: userState.data.price,
+      Pamount: userState.data.quantity,
     };
 
     await add(jsonDataADD,ctx);
