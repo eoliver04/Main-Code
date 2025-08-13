@@ -3,7 +3,7 @@ import { token } from './keys.js';
 import {list} from './fetchList.js';
 
 import { add } from './fetchAdd.js';
-const { Bot, InlineKeyboard } = require("grammy");
+import { Bot, InlineKeyboard } from 'grammy';
 const express = require('express');
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
 // Configuración del bot
