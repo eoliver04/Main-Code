@@ -71,7 +71,7 @@ bot.on("callback_query:data", async (ctx) => {
     await ctx.reply(`Producto eliminado correctamente`)
   }
 
-  else if (action === cancelarEliminar){
+  else if (action === "cancelarEliminar"){
     await ctx.reply("Operacion cancelada")
   }
 
