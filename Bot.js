@@ -37,10 +37,13 @@ bot.command("start", (ctx) => {
 bot.on("callback_query:data", async (ctx) => {
   const action = ctx.callbackQuery.data;
   const userId = ctx.from.id;
-  
+ 
+  await ctx.answerCallbackQuery();
+
   if (action === "addElement") {
     userStates[userId] = { step: "askProductName", data: {} };
     await ctx.reply("Ingresa el nombre del producto");
+    return
   } else if (action === "listVentas") {
      const items = await list();
 
@@ -67,7 +70,7 @@ bot.on("callback_query:data", async (ctx) => {
 
   else if (action.startsWith("confirmarEliminar_")){
     const id = action.split("_")[1];
-    await deleteElement(id);
+    await deleteElement(id,ctx);
     await ctx.reply(`Producto eliminado correctamente`)
   }
 
