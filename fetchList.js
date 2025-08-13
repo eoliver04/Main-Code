@@ -1,13 +1,15 @@
+import { key } from "./keys.js";
+import { listar } from "./keys.js";
 const list = async ()=>{
     try{
         const response = await fetch (
-            "https://xxnhehkvqwxwmqmonqhn.supabase.co/functions/v1/functionListar",
+            listar,
             {
                 method:'GET',
                 headers:{
                     "Content-Type":"application/json",
                     Authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4bmhlaGt2cXd4d21xbW9ucWhuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MjgzODk0MCwiZXhwIjoyMDU4NDE0OTQwfQ.XNxdrDqcyDB7-LLtLuoOaN7OLevGpzjjgBfyVbT4osA",
+                    `Bearer ${key}`,
 
                 }
             }

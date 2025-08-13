@@ -1,10 +1,12 @@
+import { token } from './keys.js';
+
 const list =require('./fetchList.js')
 const add = require('./fetchAdd.js');
 const { Bot, InlineKeyboard } = require("grammy");
 const express = require('express');
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
 // Configuración del bot
-const BOT_TOKEN = "7784921544:AAG4AI5LxZThbKUm3RdbLvDjMaShJcMIq8E";
+const BOT_TOKEN = token;
 const bot = new Bot(BOT_TOKEN);
 const userStates = {};
 // Configuración de comandos
