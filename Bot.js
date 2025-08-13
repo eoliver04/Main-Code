@@ -5,6 +5,7 @@ import {list} from './fetchList.js';
 import { add } from './fetchAdd.js';
 import { Bot, InlineKeyboard } from 'grammy';
 import express from 'express';
+import { deleteElement } from './fetchDelete.js';
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
 // Configuración del bot
 const BOT_TOKEN = token;
@@ -56,10 +57,25 @@ bot.on("callback_query:data", async (ctx) => {
      await ctx.reply("Selecciona el elemento a eliminar:",{reply_markup:keyboard});
      await ctx.answerCallbackQuery();
      return
-  } else if (action === "deleteElement") {
-    userStates[userId] = { step: "deleteElements", data: {} };
-    await ctx.reply("Elemento a eliminar");
+  } else if (action.startsWith("eliminar_")) {
+    const id =action.split("_")[1];
+    const confirmKeyboard = new InlineKeyboard()
+        .text("Sí, eliminar",`confirmarEliminar_${id}`)
+        .text("No Cancelar","cancelarEliminar")
+    await ctx.reply(`Seguro que deseas eliminar el producto ${id}`,{reply_markup:confirmKeyboard});    
   }
+
+  else if (action.startsWith("confirmarEliminar_")){
+    const id = action.split("_")[1];
+    await deleteElement(id);
+    await ctx.reply(`Producto eliminado correctamente`)
+  }
+
+  else if (action === cancelarEliminar){
+    await ctx.reply("Operacion cancelada")
+  }
+
+
 
   await ctx.answerCallbackQuery();
 });
