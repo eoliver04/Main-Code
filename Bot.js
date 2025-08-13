@@ -70,7 +70,7 @@ bot.on("callback_query:data", async (ctx) => {
 
   else if (action.startsWith("confirmarEliminar_")){
     const id = action.split("_")[1];
-    await deleteElement(id,ctx);
+    await deleteElement({id},ctx);
     await ctx.reply(`Producto eliminado correctamente`)
   }
 
