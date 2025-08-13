@@ -5,7 +5,7 @@ export const deleteElement = async (send,ctx)=>{
       const response = await fetch(
         DELETE,
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization:
