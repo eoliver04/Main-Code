@@ -1,7 +1,8 @@
 import { token } from './keys.js';
 
-const list =require('./fetchList.js')
-const add = require('./fetchAdd.js');
+import {list} from './fetchList.js';
+
+import { add } from './fetchAdd.js';
 const { Bot, InlineKeyboard } = require("grammy");
 const express = require('express');
 //const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado

@@ -1,6 +1,6 @@
 import { key } from "./keys.js";
 import { ADD } from "./keys.js";
-const add = async (send,ctx)=>{
+export const add = async (send,ctx)=>{
     try {
       const response = await fetch(
         ADD,
@@ -27,4 +27,4 @@ const add = async (send,ctx)=>{
       await ctx.reply("Error al guardar el producto");
     }
 };
-module.exports=add;
+//module.exports=add;

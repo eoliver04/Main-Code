@@ -1,6 +1,6 @@
 import { key } from "./keys.js";
 import { listar } from "./keys.js";
-const list = async ()=>{
+export const list = async ()=>{
     try{
         const response = await fetch (
             listar,
@@ -26,4 +26,3 @@ const list = async ()=>{
     }
 };
 
-module.exports = list;
