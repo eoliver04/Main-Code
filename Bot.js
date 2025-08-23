@@ -1,12 +1,12 @@
-import { token } from './keys.js';
+import { token } from "./keys.js";
 
-import {list} from './fetchList.js';
+import { list } from "./fetchList.js";
 
-import { add } from './fetchAdd.js';
-import { Bot, InlineKeyboard } from 'grammy';
-import express from 'express';
-import { deleteElement } from './fetchDelete.js';
-//const fetch = require("node-fetch"); // Asegúrate de que node-fetch esté instalado
+import { add } from "./fetchAdd.js";
+import { Bot, InlineKeyboard } from "grammy";
+import express from "express";
+import { deleteElement } from "./fetchDelete.js";
+
 // Configuración del bot
 const BOT_TOKEN = token;
 const bot = new Bot(BOT_TOKEN);
@@ -24,7 +24,7 @@ bot.api.setMyCommands(commands);
 bot.command("start", (ctx) => {
   const keyboard = new InlineKeyboard()
     .text("Agregar Elemento", "addElement")
-    .text("Listar Ventas", "listVentas")
+    .text("Listar Productos", "listProducts")
     .row()
     .text("Delete", "deleteElement");
 
@@ -37,48 +37,45 @@ bot.command("start", (ctx) => {
 bot.on("callback_query:data", async (ctx) => {
   const action = ctx.callbackQuery.data;
   const userId = ctx.from.id;
- 
+
   await ctx.answerCallbackQuery();
 
   if (action === "addElement") {
     userStates[userId] = { step: "askProductName", data: {} };
     await ctx.reply("Ingresa el nombre del producto");
-    return
-  } else if (action === "listVentas") {
-     const items = await list();
+    return;
+  } else if (action === "listProducts") {
+    const items = await list();
 
-     if (!Array.isArray(items) || items.length===0){
+    if (!Array.isArray(items) || items.length === 0) {
       await ctx.reply("No hay elementos para listar.");
       await ctx.answerCallbackQuery();
       return;
-     }
-     //teclado dinamico
-     const keyboard= new InlineKeyboard();
-     items.forEach(item =>{
-      keyboard.text(item.nombre,`eliminar_${item.id_productos}`).row();
-     });
-     await ctx.reply("Selecciona el elemento a eliminar:",{reply_markup:keyboard});
-     await ctx.answerCallbackQuery();
-     return
+    }
+    //teclado dinamico
+    const keyboard = new InlineKeyboard();
+    items.forEach((item) => {
+      keyboard.text(item.nombre, `eliminar_${item.id_productos}`).row();
+    });
+    await ctx.reply("Selecciona el elemento a eliminar:", {
+      reply_markup: keyboard,
+    });
+    await ctx.answerCallbackQuery();
+    return;
   } else if (action.startsWith("eliminar_")) {
-    const id =action.split("_")[1];
-    const confirmKeyboard = new InlineKeyboard()
-        .text("Sí, eliminar",`confirmarEliminar_${id}`)
-        .text("No Cancelar","cancelarEliminar")
-    await ctx.reply(`Seguro que deseas eliminar el producto ${id}`,{reply_markup:confirmKeyboard});    
-  }
-
-  else if (action.startsWith("confirmarEliminar_")){
     const id = action.split("_")[1];
-    await deleteElement({id},ctx);
-    
+    const confirmKeyboard = new InlineKeyboard()
+      .text("Sí, eliminar", `confirmarEliminar_${id}`)
+      .text("No Cancelar", "cancelarEliminar");
+    await ctx.reply(`Seguro que deseas eliminar el producto ${id}`, {
+      reply_markup: confirmKeyboard,
+    });
+  } else if (action.startsWith("confirmarEliminar_")) {
+    const id = action.split("_")[1];
+    await deleteElement({ id }, ctx);
+  } else if (action === "cancelarEliminar") {
+    await ctx.reply("Operacion cancelada");
   }
-
-  else if (action === "cancelarEliminar"){
-    await ctx.reply("Operacion cancelada")
-  }
-
-
 
   await ctx.answerCallbackQuery();
 });
@@ -106,7 +103,6 @@ bot.on("message:text", async (ctx) => {
     userState.step = "askPrecio";
     await ctx.reply("Ingresa el precio de los productos");
   } else if (userState.step === "askPrecio") {
-  
     const price = parseFloat(userMessage);
     if (isNaN(price)) {
       await ctx.reply("Ingrese un precio válido.");
@@ -120,8 +116,7 @@ bot.on("message:text", async (ctx) => {
       Pamount: userState.data.quantity,
     };
 
-    await add(jsonDataADD,ctx);
-    
+    await add(jsonDataADD, ctx);
 
     delete userStates[userId];
   }
@@ -129,7 +124,7 @@ bot.on("message:text", async (ctx) => {
 
 // Configuración del servidor Express para manejar el webhook
 const app = express();
-app.use(express.json()); // Reemplaza bodyParser.json() con express.json()
+app.use(express.json()); 
 
 // Inicializa el bot antes de manejar actualizaciones
 (async () => {
