@@ -6,6 +6,7 @@ import { add } from "./fetchAdd.js";
 import { Bot, InlineKeyboard } from "grammy";
 import express from "express";
 import { deleteElement } from "./fetchDelete.js";
+import { checkCliente } from "./functions/cliente.js";
 
 // Configuración del bot
 const BOT_TOKEN = token;
@@ -22,6 +23,11 @@ bot.api.setMyCommands(commands);
 
 // Comando /start
 bot.command("start", (ctx) => {
+  const userId=ctx.from.id;
+  const userName=ctx.from.first_name;
+
+  const resultado=await checkCliente(userId,userName);
+ 
   const keyboard = new InlineKeyboard()
     .text("Agregar Elemento", "addElement")
     .text("Listar Productos", "listProducts")
@@ -114,6 +120,7 @@ bot.on("message:text", async (ctx) => {
       Pname: userState.data.productName,
       Pprise: userState.data.price,
       Pamount: userState.data.quantity,
+      userId:userId
     };
 
     await add(jsonDataADD, ctx);
