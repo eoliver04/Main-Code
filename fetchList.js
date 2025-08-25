@@ -13,7 +13,7 @@ export const list = async (userId) => {
     if (response.ok) {
       return await response.json();
     } else {
-      console.erro("error al listar elementos");
+      console.error("error al listar elementos");
       return [];
     }
   } catch (err) {
