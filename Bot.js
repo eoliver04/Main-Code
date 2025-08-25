@@ -51,7 +51,7 @@ bot.on("callback_query:data", async (ctx) => {
     await ctx.reply("Ingresa el nombre del producto");
     return;
   } else if (action === "listProducts") {
-    const items = await list();
+    const items = await list(userId);
 
     if (!Array.isArray(items) || items.length === 0) {
       await ctx.reply("No hay elementos para listar.");

@@ -1,8 +1,9 @@
 import { key } from "./keys.js";
 import { listar } from "./keys.js";
-export const list = async () => {
+export const list = async (userId) => {
   try {
-    const response = await fetch(listar, {
+    
+    const response = await fetch(`${listar}?userId${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
