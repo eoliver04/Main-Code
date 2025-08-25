@@ -22,11 +22,11 @@ const commands = [
 bot.api.setMyCommands(commands);
 
 // Comando /start
-bot.command("start", (ctx) => {
+bot.command("start", async (ctx) => {
   const userId=ctx.from.id;
   const userName=ctx.from.first_name;
 
-  const resultado=await checkCliente(userId,userName);
+  const resultado= await checkCliente(userId,userName);
  
   const keyboard = new InlineKeyboard()
     .text("Agregar Elemento", "addElement")
