@@ -23,11 +23,11 @@ bot.api.setMyCommands(commands);
 
 // Comando /start
 bot.command("start", async (ctx) => {
-  const userId=ctx.from.id;
-  const userName=ctx.from.first_name;
+  const userId = ctx.from.id;
+  const userName = ctx.from.first_name;
 
-  const resultado= await checkCliente(userId,userName);
- 
+  const resultado = await checkCliente(userId, userName);
+
   const keyboard = new InlineKeyboard()
     .text("Agregar Elemento", "addElement")
     .text("Listar Productos", "listProducts")
@@ -69,17 +69,22 @@ bot.on("callback_query:data", async (ctx) => {
     await ctx.answerCallbackQuery();
     return;
   } else if (action.startsWith("eliminar_")) {
-     const id = action.split("_")[1];
-    const producto = await list(userId)
+    const id = action.split("_")[1];
+    const producto = await list(userId);
 
-    const selected= producto.find(p=>p.id_producto ==id)
-       
+    const selected = producto.find((p) => p.id_productos == id);
+
     const confirmKeyboard = new InlineKeyboard()
       .text("Sí, eliminar", `confirmarEliminar_${id}`)
       .text("No Cancelar", "cancelarEliminar");
-    await ctx.reply(`Seguro que deseas eliminar el producto ${selected ? selected.nombre : "desconocido"}`, {
-      reply_markup: confirmKeyboard,
-    });
+    await ctx.reply(
+      `Seguro que deseas eliminar el producto ${
+        selected ? selected.nombre : "desconocido"
+      }`,
+      {
+        reply_markup: confirmKeyboard,
+      }
+    );
   } else if (action.startsWith("confirmarEliminar_")) {
     const id = action.split("_")[1];
     await deleteElement({ id }, ctx);
@@ -124,7 +129,7 @@ bot.on("message:text", async (ctx) => {
       Pname: userState.data.productName,
       Pprise: userState.data.price,
       Pamount: userState.data.quantity,
-      userId:userId
+      userId: userId,
     };
 
     await add(jsonDataADD, ctx);
@@ -135,7 +140,7 @@ bot.on("message:text", async (ctx) => {
 
 // Configuración del servidor Express para manejar el webhook
 const app = express();
-app.use(express.json()); 
+app.use(express.json());
 
 // Inicializa el bot antes de manejar actualizaciones
 (async () => {
