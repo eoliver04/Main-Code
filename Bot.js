@@ -61,7 +61,7 @@ bot.on("callback_query:data", async (ctx) => {
     //teclado dinamico
     const keyboard = new InlineKeyboard();
     items.forEach((item) => {
-      keyboard.text(item.nombre, `eliminar_${item.id_productos}`).row();
+      keyboard.text(item.nombre, `eliminar_${item.id_productos}_${item.nombre}`).row();
     });
     await ctx.reply("Selecciona el elemento a eliminar:", {
       reply_markup: keyboard,
@@ -69,11 +69,12 @@ bot.on("callback_query:data", async (ctx) => {
     await ctx.answerCallbackQuery();
     return;
   } else if (action.startsWith("eliminar_")) {
-    const id = action.split("_")[1];
+    const data = action.split("eliminar_")[1];
+    const [id,...nombre] =data.split("/");
     const confirmKeyboard = new InlineKeyboard()
       .text("Sí, eliminar", `confirmarEliminar_${id}`)
       .text("No Cancelar", "cancelarEliminar");
-    await ctx.reply(`Seguro que deseas eliminar el producto ${id}`, {
+    await ctx.reply(`Seguro que deseas eliminar el producto ${nombre}`, {
       reply_markup: confirmKeyboard,
     });
   } else if (action.startsWith("confirmarEliminar_")) {
