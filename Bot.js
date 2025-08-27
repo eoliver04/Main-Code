@@ -69,7 +69,9 @@ bot.on("callback_query:data", async (ctx) => {
     await ctx.answerCallbackQuery();
     return;
   } else if (action.startsWith("eliminar_")) {
+     const id = action.split("_")[1];
     const producto = await list(userId)
+
     const selected= producto.find(p=>p.id_producto ==id)
        
     const confirmKeyboard = new InlineKeyboard()
