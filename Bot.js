@@ -50,7 +50,7 @@ bot.on("callback_query:data", async (ctx) => {
     userStates[userId] = { step: "askProductName", data: {} };
     await ctx.reply("Ingresa el nombre del producto");
     return;
-  } else if (action === "listProducts") {
+  } else if (action === "deleteElement") {
     const items = await list(userId);
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -63,7 +63,7 @@ bot.on("callback_query:data", async (ctx) => {
     items.forEach((item) => {
       keyboard.text(item.nombre, `eliminar_${item.id_productos}`).row();
     });
-    await ctx.reply("Selecciona el elemento a eliminar:", {
+    await ctx.reply("Lista de productos:", {
       reply_markup: keyboard,
     });
     await ctx.answerCallbackQuery();
@@ -90,6 +90,32 @@ bot.on("callback_query:data", async (ctx) => {
     await deleteElement({ id }, ctx);
   } else if (action === "cancelarEliminar") {
     await ctx.reply("Operacion cancelada");
+  } else if (action === "listProducts") {
+    const items = await list(userId);
+    const keyboard = new InlineKeyboard();
+    items.forEach((item) => {
+      keyboard.text(item.nombre, `show_${item.id_productos}`);
+    });
+    await ctx.reply("Lista de productos", {
+      reply_markup: keyboard,
+    });
+  } else if (action.startsWith("show_")) {
+    const id = action.split("_")[1];
+    const productos =await list(userId);
+    const producto = productos.find((p) => p.id_productos == id);
+    if (producto) {
+      const InfoKeyboard = new InlineKeyboard()
+        .text(`Nombre: ${producto.nombre}`)
+        .row()
+        .text(`Cantidad: ${producto.cantidad}`)
+        .row()
+        .text(`Precio: ${producto.precio}`);
+      await ctx.reply("Informacion del producto", {
+        reply_markup: InfoKeyboard,
+      });
+    } else {
+      ctx.reply("Producto no enctrodo");
+    }
   }
 
   await ctx.answerCallbackQuery();
