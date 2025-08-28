@@ -109,7 +109,7 @@ bot.on("callback_query:data", async (ctx) => {
         .row()
         .text(`Cantidad: ${producto.cantidad}`)
         .row()
-        .text(`Precio: ${producto.precio}`);
+        .text(`Precio: ${producto.precio_unitario}`);
       await ctx.reply("Informacion del producto", {
         reply_markup: InfoKeyboard,
       });
