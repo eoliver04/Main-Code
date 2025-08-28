@@ -47,5 +47,6 @@ This bot serves as a **portfolio project** to showcase backend development skill
 ---
 
 
+https://img.shields.io/badge/TelegramBot-Link-blue?style=plastic
 
-\[Add your bot link here]
+https://t.me/tuEspacio_bot
