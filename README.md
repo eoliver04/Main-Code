@@ -1,4 +1,5 @@
-# Telegram Inventory Bot
+# Telegram Inventory Bot click to use the bot ![Static Badge](https://img.shields.io/badge/Telegram_Bot-Link-blue?logo=probot&link=https%3A%2F%2Ft.me%2FtuEspacio_bot)
+
 
 A **Telegram bot** for managing a personal inventory or warehouse. This bot allows users to add, list, and delete products, keeping track of quantities and prices. Built with **Node.js**, **Express**, and **Grammy** for Telegram bot integration. Data is stored and managed using **Supabase** with Edge Functions.
 
@@ -47,6 +48,4 @@ This bot serves as a **portfolio project** to showcase backend development skill
 ---
 
 
-https://img.shields.io/badge/TelegramBot-Link-blue?style=plastic
 
-https://t.me/tuEspacio_bot
