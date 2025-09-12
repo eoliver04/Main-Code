@@ -1,11 +1,11 @@
-import { token } from "./keys.js";
+import { token } from "./functions/keys.js";
 
-import { list } from "./fetchList.js";
+import { list } from "./functions/fetchList.js";
 
-import { add } from "./fetchAdd.js";
+import { add } from "./functions/fetchAdd.js";
 import { Bot, InlineKeyboard } from "grammy";
 import express from "express";
-import { deleteElement } from "./fetchDelete.js";
+import { deleteElement } from "./functions/fetchDelete.js";
 import { checkCliente } from "./functions/cliente.js";
 
 // Configuración del bot
@@ -101,7 +101,7 @@ bot.on("callback_query:data", async (ctx) => {
     });
   } else if (action.startsWith("show_")) {
     const id = action.split("_")[1];
-    const productos =await list(userId);
+    const productos = await list(userId);
     const producto = productos.find((p) => p.id_productos == id);
     if (producto) {
       const InfoKeyboard = new InlineKeyboard()
