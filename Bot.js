@@ -7,6 +7,9 @@ import { Bot, InlineKeyboard } from "grammy";
 import express from "express";
 import { deleteElement } from "./functions/fetchDelete.js";
 import { checkCliente } from "./functions/cliente.js";
+import { text } from "node:stream/consumers";
+import { venta } from "./functions/fetchVenta.js";
+
 
 // Configuración del bot
 const BOT_TOKEN = token;
@@ -18,6 +21,7 @@ const commands = [
   { command: "list", description: "Lista los elementos del almacén" },
   { command: "add", description: "Agrega elementos al almacén" },
   { command: "delete", description: "Elimina elementos" },
+  { command: "sell", description: "Ventas de elementos" },
 ];
 bot.api.setMyCommands(commands);
 
@@ -32,7 +36,8 @@ bot.command("start", async (ctx) => {
     .text("Agregar Elemento", "addElement")
     .text("Listar Productos", "listProducts")
     .row()
-    .text("Delete", "deleteElement");
+    .text("Delete", "deleteElement")
+    .text("Venta", "sellProduct");
 
   ctx.reply("Selecciona una opción", {
     reply_markup: keyboard,
@@ -116,6 +121,22 @@ bot.on("callback_query:data", async (ctx) => {
     } else {
       ctx.reply("Producto no enctrodo");
     }
+  } else if (action === "sellProduct") {
+    
+    const items = await list(userId);
+    const keyboardVenta = new InlineKeyboard();
+
+    items.forEach((p) => {
+      keyboardVenta.text(p.nombre, `selected_${p.id_productos}`);
+    });
+    await ctx.reply("Elementos a vender",{
+      reply_markup:keyboardVenta,
+    });
+  }else if(action.startsWith("selected_")){
+      const id=action.split("_")[1];
+      userStates[userId] = { step: "ventaCantidad", productoId:id };
+      await ctx.reply("Ingrese la cantidad a vender");
+      
   }
 
   await ctx.answerCallbackQuery();
@@ -161,6 +182,21 @@ bot.on("message:text", async (ctx) => {
     await add(jsonDataADD, ctx);
 
     delete userStates[userId];
+  }else if(userState.step ==="ventaCantidad") {
+    const cantidad= parseInt(userMessage);
+    if(isNaN(cantidad)||cantidad<=0){
+      await ctx.reply("Ingrese una cantidad válida.");
+      return
+    };
+    
+    const pVenta={
+          p_id_producto:userState.productoId,
+          p_amount:cantidad
+        };
+
+        await venta(pVenta,ctx);
+        delete userStates[userId];
+
   }
 });
 

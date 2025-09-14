@@ -10,3 +10,5 @@ export const token = process.env.token;
 export const DELETE = process.env.delete;
 
 export const URL = process.env.SUP_URL;
+
+export const VENTA=process.env.venta;
