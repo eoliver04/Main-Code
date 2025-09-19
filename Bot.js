@@ -17,11 +17,8 @@ const bot = new Bot(BOT_TOKEN);
 const userStates = {};
 // Configuración de comandos
 const commands = [
-  { command: "start", description: "Inicializa el bot" },
-  { command: "list", description: "Lista los elementos del almacén" },
-  { command: "add", description: "Agrega elementos al almacén" },
-  { command: "delete", description: "Elimina elementos" },
-  { command: "sell", description: "Ventas de elementos" },
+  { command: "start", description: "Inicializa el bot" }
+  
 ];
 bot.api.setMyCommands(commands);
 
