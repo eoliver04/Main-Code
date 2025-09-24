@@ -10,7 +10,6 @@ import { checkCliente } from "./functions/cliente.js";
 import { text } from "node:stream/consumers";
 import { venta } from "./functions/fetchVenta.js";
 
-
 // Configuración del bot
 const BOT_TOKEN = token;
 const bot = new Bot(BOT_TOKEN);
@@ -122,21 +121,23 @@ bot.on("callback_query:data", async (ctx) => {
       ctx.reply("Producto no enctrodo");
     }
   } else if (action === "sellProduct") {
-    
     const items = await list(userId);
     const keyboardVenta = new InlineKeyboard();
 
     items.forEach((p) => {
       keyboardVenta.text(p.nombre, `selected_${p.id_productos}`);
     });
-    await ctx.reply("Elementos a vender",{
-      reply_markup:keyboardVenta,
+    await ctx.reply("Elementos a vender", {
+      reply_markup: keyboardVenta,
     });
-  }else if(action.startsWith("selected_")){
-      const id=action.split("_")[1];
-      userStates[userId] = { step: "ventaCantidad", productoId:id };
-      await ctx.reply("Ingrese la cantidad a vender");
-      
+  } else if (action.startsWith("selected_")) {
+    const id = action.split("_")[1];
+    userStates[userId] = {
+      step: "ventaCantidad",
+      productoId: id,
+      precio: precio_unitario,
+    };
+    await ctx.reply("Ingrese la cantidad a vender");
   }
 
   await ctx.answerCallbackQuery();
@@ -182,21 +183,22 @@ bot.on("message:text", async (ctx) => {
     await add(jsonDataADD, ctx);
 
     delete userStates[userId];
-  }else if(userState.step ==="ventaCantidad") {
-    const cantidad= parseInt(userMessage);
-    if(isNaN(cantidad)||cantidad<=0){
+  } else if (userState.step === "ventaCantidad") {
+    const cantidad = parseInt(userMessage);
+    if (isNaN(cantidad) || cantidad <= 0) {
       await ctx.reply("Ingrese una cantidad válida.");
-      return
+      return;
+    }
+
+    const pVenta = {
+      p_id_producto: userState.productoId,
+      p_amount: cantidad,
+      p_price: userState.precio,
+
     };
-    
-    const pVenta={
-          p_id_producto:userState.productoId,
-          p_amount:cantidad
-        };
 
-        await venta(pVenta,ctx);
-        delete userStates[userId];
-
+    await venta(pVenta, ctx);
+    delete userStates[userId];
   }
 });
 
