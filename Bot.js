@@ -14,6 +14,10 @@ import { venta } from "./functions/fetchVenta.js";
 const BOT_TOKEN = token;
 const bot = new Bot(BOT_TOKEN);
 const userStates = {};
+
+// Primero, agreguemos un objeto para mantener registro de los mensajes
+const userMessages = {};
+
 // Configuración de comandos
 const commands = [
   { command: "start", description: "Inicializa el bot" },
@@ -38,9 +42,24 @@ bot.command("start", async (ctx) => {
     .text("Delete", "deleteElement")
     .text("Venta", "sellProduct");
 
-  ctx.reply("Selecciona una opción", {
+  // Eliminar mensajes anteriores si existen
+  if (userMessages[userId]) {
+    for (const messageId of userMessages[userId]) {
+      try {
+        await ctx.api.deleteMessage(userId, messageId);
+      } catch (error) {
+        console.log("Error al eliminar mensaje:", error);
+      }
+    }
+    userMessages[userId] = [];
+  }
+
+  const message = await ctx.reply("Selecciona una opción", {
     reply_markup: keyboard,
   });
+
+  // Guardar el ID del nuevo mensaje
+  userMessages[userId] = [message.message_id];
 });
 
 // Manejadores para los botones
@@ -48,11 +67,24 @@ bot.on("callback_query:data", async (ctx) => {
   const action = ctx.callbackQuery.data;
   const userId = ctx.from.id;
 
+  // Eliminar mensajes anteriores
+  if (userMessages[userId]) {
+    for (const messageId of userMessages[userId]) {
+      try {
+        await ctx.api.deleteMessage(userId, messageId);
+      } catch (error) {
+        console.log("Error al eliminar mensaje:", error);
+      }
+    }
+    userMessages[userId] = [];
+  }
+
   await ctx.answerCallbackQuery();
 
   if (action === "addElement") {
+    const message = await ctx.reply("Ingresa el nombre del producto");
+    userMessages[userId] = [message.message_id];
     userStates[userId] = { step: "askProductName", data: {} };
-    await ctx.reply("Ingresa el nombre del producto");
     return;
   } else if (action === "deleteElement") {
     const items = await list(userId);
@@ -132,7 +164,7 @@ bot.on("callback_query:data", async (ctx) => {
     });
   } else if (action.startsWith("selected_")) {
     const id = action.split("_")[1];
-    const productos=await list(userId);
+    const productos = await list(userId);
     const producto = productos.find((p) => p.id_productos == id);
     userStates[userId] = {
       step: "ventaCantidad",
@@ -150,6 +182,25 @@ bot.on("message:text", async (ctx) => {
   const userId = ctx.from.id;
   const userState = userStates[userId];
 
+  // Eliminar mensajes anteriores
+  if (userMessages[userId]) {
+    for (const messageId of userMessages[userId]) {
+      try {
+        await ctx.api.deleteMessage(userId, messageId);
+      } catch (error) {
+        console.log("Error al eliminar mensaje:", error);
+      }
+    }
+    userMessages[userId] = [];
+  }
+
+  // Eliminar el mensaje del usuario
+  try {
+    await ctx.api.deleteMessage(userId, ctx.message.message_id);
+  } catch (error) {
+    console.log("Error al eliminar mensaje del usuario:", error);
+  }
+
   if (!userState) return;
 
   const userMessage = ctx.message.text;
@@ -157,7 +208,8 @@ bot.on("message:text", async (ctx) => {
   if (userState.step === "askProductName") {
     userState.data.productName = userMessage;
     userState.step = "askCantidad";
-    await ctx.reply("Ingresa la cantidad del producto");
+    const message = await ctx.reply("Ingresa la cantidad del producto");
+    userMessages[userId] = [message.message_id];
   } else if (userState.step === "askCantidad") {
     const quantity = parseInt(userMessage, 10);
     if (isNaN(quantity)) {
@@ -196,8 +248,7 @@ bot.on("message:text", async (ctx) => {
       p_id_producto: userState.productoId,
       p_amount: cantidad,
       p_precio: userState.precio,
-      p_cliente: userId
-
+      p_cliente: userId,
     };
 
     await venta(pVenta, ctx);
