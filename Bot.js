@@ -132,6 +132,8 @@ bot.on("callback_query:data", async (ctx) => {
     });
   } else if (action.startsWith("selected_")) {
     const id = action.split("_")[1];
+    const productos=await list(userId);
+    const producto = productos.find((p) => p.id_productos == id);
     userStates[userId] = {
       step: "ventaCantidad",
       productoId: id,
