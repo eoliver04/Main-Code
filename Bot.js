@@ -137,7 +137,7 @@ bot.on("callback_query:data", async (ctx) => {
     userStates[userId] = {
       step: "ventaCantidad",
       productoId: id,
-      precio: precio_unitario,
+      precio: producto.precio_unitario,
     };
     await ctx.reply("Ingrese la cantidad a vender");
   }
@@ -195,7 +195,7 @@ bot.on("message:text", async (ctx) => {
     const pVenta = {
       p_id_producto: userState.productoId,
       p_amount: cantidad,
-      p_price: userState.precio,
+      p_precio: userState.precio,
 
     };
 
