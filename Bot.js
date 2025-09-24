@@ -196,6 +196,7 @@ bot.on("message:text", async (ctx) => {
       p_id_producto: userState.productoId,
       p_amount: cantidad,
       p_precio: userState.precio,
+      p_cliente: userId
 
     };
 
