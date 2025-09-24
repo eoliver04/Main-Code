@@ -11,6 +11,11 @@ export const venta = async (send, ctx) => {
       body: JSON.stringify(send),
     });
 
+    const result = await response.json();
+    if(result.success){
+      await ctx.reply(`EL total de la venta es ${result.total}`);
+    }
+
     if (response.ok) {
       await ctx.reply("The product has been sold correct");
     } else {
